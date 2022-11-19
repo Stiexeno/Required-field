@@ -60,7 +60,7 @@ public class RequiredDrawer : PropertyDrawer
         //------------------------------------------------
         x1 = area.x;
         y1 = area.y + GetPropertyHeight(property, label);
-        x2 = area.width;
+        x2 = area.width + 2f;
         y2 = borderWidth;
 
         lineRect = new Rect(x1, y1, x2, y2);
