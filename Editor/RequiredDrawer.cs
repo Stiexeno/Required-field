@@ -7,6 +7,9 @@ public class RequiredDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+        var indent = EditorGUI.indentLevel;
+        EditorGUI.indentLevel = 0;
+        
         EditorGUI.PropertyField(position, property, new GUIContent(label.text), true);
 
         var value = property.objectReferenceValue;
@@ -22,6 +25,8 @@ public class RequiredDrawer : PropertyDrawer
             position.x -= 22f;
             EditorGUI.LabelField(position, new GUIContent(EditorGUIUtility.IconContent("d_console.erroricon")));
         }
+        
+        EditorGUI.indentLevel = indent;
     }
 
     private void DrawBorderRect(SerializedProperty property, GUIContent label, Rect area, Color color,
