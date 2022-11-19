@@ -23,13 +23,13 @@ public class RequiredDrawer : PropertyDrawer
 
             if (RequiredData.Data.showBorder)
             {
-                DrawBorderRect(property, label, position, Color.red, 1f);   
+                DrawBorderRect(property, label, position, RequiredData.Data.borderColor, 1f);   
             }
 
             if (RequiredData.Data.showIcon)
             {
                 position.x -= 22f;
-                EditorGUI.LabelField(position, new GUIContent(EditorGUIUtility.IconContent("d_console.erroricon")));   
+                EditorGUI.LabelField(position, new GUIContent(EditorGUIUtility.IconContent(RequiredData.Data.GetIconType())));   
             }
         }
         
