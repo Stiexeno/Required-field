@@ -20,10 +20,17 @@ public class RequiredDrawer : PropertyDrawer
         {
             position = new Rect((float) (position.x + (double) EditorGUIUtility.labelWidth + 2.0), position.y,
                 (float) (position.width - (double) EditorGUIUtility.labelWidth - 2.0), position.height);
-            DrawBorderRect(property, label, position, Color.red, 2f);
 
-            position.x -= 22f;
-            EditorGUI.LabelField(position, new GUIContent(EditorGUIUtility.IconContent("d_console.erroricon")));
+            if (RequiredData.Data.showBorder)
+            {
+                DrawBorderRect(property, label, position, Color.red, 1f);   
+            }
+
+            if (RequiredData.Data.showIcon)
+            {
+                position.x -= 22f;
+                EditorGUI.LabelField(position, new GUIContent(EditorGUIUtility.IconContent("d_console.erroricon")));   
+            }
         }
         
         EditorGUI.indentLevel = indent;
@@ -43,7 +50,7 @@ public class RequiredDrawer : PropertyDrawer
         EditorGUI.DrawRect(lineRect, color);
 
         //------------------------------------------------
-        x1 = area.x + area.width;
+        x1 = area.x + area.width - 1f;
         y1 = area.y;
         x2 = borderWidth;
         y2 = area.height;
@@ -64,8 +71,8 @@ public class RequiredDrawer : PropertyDrawer
 
         //------------------------------------------------
         x1 = area.x;
-        y1 = area.y + GetPropertyHeight(property, label);
-        x2 = area.width + 2f;
+        y1 = area.y + GetPropertyHeight(property, label) - 1f;
+        x2 = area.width;
         y2 = borderWidth;
 
         lineRect = new Rect(x1, y1, x2, y2);
