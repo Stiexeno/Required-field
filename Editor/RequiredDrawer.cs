@@ -1,6 +1,8 @@
+using System;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 [CustomPropertyDrawer(typeof(Object), true)]
 public class RequiredDrawer : PropertyDrawer
@@ -15,13 +17,16 @@ public class RequiredDrawer : PropertyDrawer
         var value = property.objectReferenceValue;
         var containsFieldAttribute = fieldInfo.GetCustomAttribute<Nullable>() != null;
         var containsClassAttribute = property.serializedObject.targetObject.GetType().GetCustomAttribute<Nullable>() != null;
+        var isExcluded = IsExcludedType(property.serializedObject.targetObject.GetType());
         
-        if (value == false && containsFieldAttribute == false && containsClassAttribute == false)
+        if (value == false && containsFieldAttribute == false && containsClassAttribute == false && isExcluded == false)
         {
             position = new Rect((float) (position.x + (double) EditorGUIUtility.labelWidth + 2.0), position.y,
                 (float) (position.width - (double) EditorGUIUtility.labelWidth - 2.0), position.height);
 
-            if (RequiredData.Data.showBorder)
+            var containsKey = RequiredData.Data.TryGetKey(fieldInfo.ToString());
+            
+            if (RequiredData.Data.showBorder && containsKey == false)
             {
                 DrawBorderRect(property, label, position, RequiredData.Data.borderColor, 1f);   
             }
@@ -29,13 +34,29 @@ public class RequiredDrawer : PropertyDrawer
             if (RequiredData.Data.showIcon)
             {
                 position.x -= 22f;
-                EditorGUI.LabelField(position, new GUIContent(EditorGUIUtility.IconContent(RequiredData.Data.GetIconType())));   
+
+                if (GUI.Button(position, new GUIContent(EditorGUIUtility.IconContent(containsKey == false ? RequiredData.Data.GetIconType() : "Refresh")), GUIStyle.none))
+                {
+                    if (containsKey == false)
+                    {
+                        RequiredData.Data.AddKey(fieldInfo.ToString());   
+                    }
+                    else
+                    {
+                        RequiredData.Data.RemoveKey(fieldInfo.ToString());   
+                    }
+                }
             }
         }
         
         EditorGUI.indentLevel = indent;
     }
 
+    private bool IsExcludedType(Type parentType)
+    {
+        return Array.Find(RequiredExcludedTypes.excludedTypes, excludedType => excludedType == parentType) != null;
+    }
+    
     private void DrawBorderRect(SerializedProperty property, GUIContent label, Rect area, Color color,
         float borderWidth)
     {
